@@ -7,15 +7,10 @@
     "content_scripts": [
       {
         "matches": ["*://*.ultimate-guitar.com/*"],
-        "js": ["background.js"]
+        "js": ["columnify.js"]
       }
     ],
     "browser_action": {
-      "default_title": "Make it modest"
-    },
-    "permissions": [
-      "https://*/*",
-      "http://*/*",
-      "activeTab"
-    ]
+      "default_title": "More of the tab please."
+    }
   }

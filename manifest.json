@@ -1,21 +1,21 @@
 {
-    "name": "Injecta",
+    "name": "Modest Guitar",
     "version": "0.0.1",
     "manifest_version": 2,
-    "description": "Injecting stuff",
-    "homepage_url": "http://danharper.me",
-    "background": {
-      "scripts": [
-        "background.js"
-      ],
-      "persistent": true
-    },
+    "description": "Multiple columns for viewing Ultimate-Guitar tabs",
+    "homepage_url": "https://www.linkedin.com/in/ingman/",
+    "content_scripts": [
+      {
+        "matches": ["*://*.ultimate-guitar.com/*"],
+        "js": ["background.js"]
+      }
+    ],
     "browser_action": {
-      "default_title": "Inject!"
+      "default_title": "Make it modest"
     },
     "permissions": [
       "https://*/*",
       "http://*/*",
-      "tabs"
+      "activeTab"
     ]
   }

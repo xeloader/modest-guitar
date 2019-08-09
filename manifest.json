@@ -11,6 +11,7 @@
       }
     ],
     "browser_action": {
-      "default_title": "More of the tab please."
+      "default_title": "More of the tab please.",
+      "default_popup": "popup.html" 
     }
   }

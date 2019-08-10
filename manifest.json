@@ -7,7 +7,8 @@
     "content_scripts": [
       {
         "matches": ["*://*.ultimate-guitar.com/*"],
-        "js": ["contentScript.js"]
+        "js": ["contentScript.js"],
+        "all_frames": true
       }
     ],
     "browser_action": {
@@ -16,6 +17,6 @@
     }, 
     "permissions": [
       "storage",
-     "activeTab"
+      "activeTab"
     ]
   }

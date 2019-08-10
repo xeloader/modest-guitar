@@ -1,30 +1,32 @@
 const rangeElem = document.getElementById('column-count')
 var currentValElem = document.getElementById('current-column-count')
 rangeElem.oninput = updateRange
-setColumns(3)
+
+sendToCS({ message: 'getColumns' })
 
 function updateRange (event) {
   setColumns(event.target.value)
 }
 
-function setColumns (count) {
-  currentValElem.textContent = count
-  rangeElem.value = count
+// send to content script
+function sendToCS (message) {
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    var port = chrome.tabs.connect(tabs[0].id, { name: 'columns' })
-    port.runtime.sendMessage({
-      message: 'setColumns',
-      columnCount: count
-    })
+    chrome.tabs.sendMessage(tabs[0].id, message)
   })
 }
 
-chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-  var port = chrome.tabs.connect(tabs[0].id, { name: 'columns' })
-  port.onMessage.addListener(
-    function (request, sender, sendResponse) {
-      if (request.message === 'updateColumns') {
-        setColumns(request.columnCount)
-      }
-    })
-})
+function setColumns (count) {
+  currentValElem.textContent = count
+  rangeElem.value = count
+  sendToCS({
+    message: 'setColumns',
+    columnCount: count
+  })
+}
+
+chrome.runtime.onMessage.addListener(
+  function (request) {
+    if (request.message === 'updateColumns') {
+      setColumns(request.columnCount)
+    }
+  })

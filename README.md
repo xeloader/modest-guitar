@@ -8,3 +8,6 @@ An extension for Google Chrome to view tabs in multiple columns.
 
 ## Supports
 - Ultimate-Guitar
+
+## Install
+https://chrome.google.com/webstore/detail/modest-guitar/kbdobpkcobapldadlpcjbjijmjnjfddk

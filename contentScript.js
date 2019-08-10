@@ -1,7 +1,6 @@
 function setColumns (columnCount) {
   var tabWrapper = document.querySelector('code > pre')
   tabWrapper.style.columnCount = columnCount
-  tabWrapper.style.backgroundColor = 'blue'
 }
 
 // send to the popup script

@@ -1,4 +1,4 @@
-![modest guitar](https://user-images.githubusercontent.com/2003998/62824843-8fe93700-bba3-11e9-888e-d7a3c1026e6c.png)
+![modest guitar](https://user-images.githubusercontent.com/2003998/62826414-5fad9280-bbbb-11e9-9be9-07220e88cc38.png)
 
 ![chrome-rating](https://img.shields.io/chrome-web-store/stars/kbdobpkcobapldadlpcjbjijmjnjfddk)
 ![chrome-price](https://img.shields.io/chrome-web-store/price/kbdobpkcobapldadlpcjbjijmjnjfddk)

@@ -14,6 +14,22 @@ function getColumns (cb) {
   })
 }
 
+function getWrapper () {
+  const main = document.getElementsByTagName('main')
+  if (main) {
+    return main[0].parentNode
+  }
+}
+
+function maximizeViewport () {
+  const wrapper = getWrapper()
+  if (wrapper) {
+    wrapper.style.maxWidth = 'unset'
+  }
+}
+
+maximizeViewport()
+
 getColumns((columnCount) => {
   setColumns(columnCount)
 })

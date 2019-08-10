@@ -1,12 +1,12 @@
 {
     "name": "Modest Guitar",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "manifest_version": 2,
     "description": "Multiple columns for viewing Ultimate-Guitar tabs",
     "homepage_url": "https://github.com/xeloader/modest-guitar",
     "content_scripts": [
       {
-        "matches": ["*://*.ultimate-guitar.com/*"],
+        "matches": ["*://*.ultimate-guitar.com/tab/*"],
         "js": ["contentScript.js"],
         "all_frames": true
       }

@@ -1,6 +1,6 @@
 {
     "name": "Modest Guitar",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "manifest_version": 2,
     "description": "Multiple columns for viewing Ultimate-Guitar tabs",
     "homepage_url": "https://github.com/xeloader/modest-guitar",

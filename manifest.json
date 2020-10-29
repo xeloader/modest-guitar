@@ -7,7 +7,10 @@
     "homepage_url": "https://github.com/xeloader/modest-guitar",
     "content_scripts": [
       {
-        "matches": ["*://*.ultimate-guitar.com/tab/*"],
+        "matches": [
+          "*://*.ultimate-guitar.com/tab/*",
+          "*://*.ultimate-guitar.com/user/tab/*"
+        ],
         "js": ["contentScript.js"],
         "all_frames": true
       }

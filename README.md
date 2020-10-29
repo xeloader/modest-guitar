@@ -11,3 +11,9 @@ An extension for Google Chrome to view tabs in multiple columns.
 
 ## Install
 https://chrome.google.com/webstore/detail/modest-guitar/kbdobpkcobapldadlpcjbjijmjnjfddk
+
+## Contributors
+
+Special thanks to contributors. PRs are welcome.
+
+- [@TonyBaldascino](https://github.com/TonyBaldascino)

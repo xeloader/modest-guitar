@@ -1,6 +1,31 @@
+const wrapperSelector = 'main';
+const tabsSelector = 'code > pre';
+
+function waitForElm(selector) {
+  return new Promise(resolve => {
+    if (document.querySelector(selector)) {
+      return resolve(document.querySelector(selector))
+    }
+
+    const observer = new MutationObserver(mutations => {
+      if (document.querySelector(selector)) {
+        resolve(document.querySelector(selector))
+        observer.disconnect()
+      }
+    })
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    })
+  })
+}
+
 function setColumns (columnCount) {
-  var tabWrapper = document.querySelector('code > pre')
-  tabWrapper.style.columnCount = columnCount
+  const tabWrapper = document.querySelector(tabsSelector)
+  if (tabWrapper) {
+    tabWrapper.style.columnCount = columnCount
+  }
 }
 
 // send to the popup script
@@ -15,9 +40,9 @@ function getColumns (cb) {
 }
 
 function getWrapper () {
-  const main = document.getElementsByTagName('main')
+  const main = document.querySelector(wrapperSelector)
   if (main) {
-    return main[0].parentNode
+    return main.parentNode
   }
 }
 
@@ -28,10 +53,15 @@ function maximizeViewport () {
   }
 }
 
-maximizeViewport()
-
-getColumns((columnCount) => {
-  setColumns(columnCount)
+Promise.all([
+  waitForElm(wrapperSelector),
+  waitForElm(tabsSelector)
+]).then(() => {
+  maximizeViewport()
+  
+  getColumns((columnCount) => {
+    setColumns(columnCount)
+  })
 })
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {

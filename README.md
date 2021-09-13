@@ -16,5 +16,5 @@ https://chrome.google.com/webstore/detail/modest-guitar/kbdobpkcobapldadlpcjbjij
 
 Special thanks to contributors. PRs are welcome.
 
-- [@TonyBaldascino](https://github.com/TonyBaldascino)
-- [@aberonni](https://github.com/aberonni)
+- [@TonyBaldascino](https://github.com/TonyBaldascino) - *Support for personal tabs*
+- [@aberonni](https://github.com/aberonni) - *Support for pro tabs*

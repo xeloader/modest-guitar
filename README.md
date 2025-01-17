@@ -1,4 +1,4 @@
-![modest guitar](https://user-images.githubusercontent.com/2003998/62826414-5fad9280-bbbb-11e9-9be9-07220e88cc38.png)
+![Modest Guitar - Say goodbye to scroll pauses while jamming](https://user-images.githubusercontent.com/2003998/62826414-5fad9280-bbbb-11e9-9be9-07220e88cc38.png)
 
 
 <div align="center">
@@ -11,13 +11,13 @@ Enhance tabs from <a href="https://ultimate-guitar.com">Ultimate-Guitar</a> with
 
 
 ## Install
-Google Chrome
 
-https://chrome.google.com/webstore/detail/modest-guitar/kbdobpkcobapldadlpcjbjijmjnjfddk
+* [Google Chrome](https://chrome.google.com/webstore/detail/modest-guitar/kbdobpkcobapldadlpcjbjijmjnjfddk)
+* Firefox (Coming soon)
 
 ## Contributors
 
-Special thanks to contributors. PRs are welcome.
+Special thanks to contributors. PRs and ideas are welcome.
 
 - [@TonyBaldascino](https://github.com/TonyBaldascino) - *Support for personal tabs*
 - [@aberonni](https://github.com/aberonni) - *Support for pro tabs*

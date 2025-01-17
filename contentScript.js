@@ -1,7 +1,9 @@
-const wrapperSelector = 'main';
-const tabsSelector = 'code > pre';
-const tabsWithPaddingSelector = 'section.P8ReX'
-const mainContentSelector = 'article.o2tA_.JJ8_m'
+const SELECTOR = {
+  wrapper: 'main',
+  tabs: 'code > pre',
+  tabsWithPadding: 'section.P8ReX',
+  mainContent: 'article.o2tA_.JJ8_m'
+}
 
 function waitForElm(selector) {
   return new Promise(resolve => {
@@ -24,7 +26,7 @@ function waitForElm(selector) {
 }
 
 function setColumns (columnCount) {
-  const tabWrapper = document.querySelector(tabsSelector)
+  const tabWrapper = document.querySelector(SELECTOR.tabs)
   if (tabWrapper) {
     tabWrapper.style.columnCount = columnCount
   }
@@ -32,7 +34,10 @@ function setColumns (columnCount) {
 
 // send to the popup script
 function sendToPopup (message) {
-  chrome.runtime.sendMessage(message)
+  chrome.runtime.sendMessage({
+    to: 'popup',
+    ...message
+  })
 }
 
 function getColumns (cb) {
@@ -42,7 +47,7 @@ function getColumns (cb) {
 }
 
 function getWrapper () {
-  const main = document.querySelector(wrapperSelector)
+  const main = document.querySelector(SELECTOR.wrapper)
   if (main) {
     return main.parentNode
   }
@@ -75,28 +80,57 @@ function setupStyles () {
   $style.id = "modest-guitar-color-scheme"
   $style.textContent = `
   @media (prefers-color-scheme: dark) {
-    ${mainContentSelector} {
+    [data-dark-mode=true] ${SELECTOR.mainContent} {
       filter: invert();
     }
-    .mg-fullscreen ${mainContentSelector} {
+    [data-dark-mode=true].mg-fullscreen ${SELECTOR.mainContent} {
       filter: none;
     }
-    .mg-fullscreen ${tabsWithPaddingSelector} {
+    [data-dark-mode=true].mg-fullscreen ${SELECTOR.tabsWithPadding} {
       filter: invert();
     }
   }
   `
 
   $style.textContent += `
-    .mg-fullscreen ${tabsWithPaddingSelector} {
+    .mg-fullscreen ${SELECTOR.tabsWithPadding} {
       overflow-y: scroll;
       overflow-x: hidden;
       background-color: white;
       height: 100%;
       padding: 0.5rem 0.75rem;
     }
-    .mg-fullscreen ${tabsSelector} {
+    .mg-exit-fullscreen {
+      display: none;
+    }
+    .mg-enter-fullscreen {
+      display: block;
+    }
+    .mg-fullscreen .mg-exit-fullscreen {
+      display: block;
+    }
+    .mg-fullscreen .mg-enter-fullscreen {
+      display: none;
+    }
+    .mg-fullscreen ${SELECTOR.tabs} {
       background-color: transparent;
+    }
+  `
+
+  $style.textContent += `
+    /**
+     * Ellipsis text overflowing columns
+     **/
+    ${SELECTOR.tabs},
+    ${SELECTOR.tabs} span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  `
+
+  $style.textContent += `
+    [class^=mg-]:focus {
+      outline: red 2px solid;
     }
   `
 
@@ -106,6 +140,7 @@ function setupStyles () {
     }
     .mg-action-bar {
       display: flex;
+      justify-content: space-between;
       align-items: center;
       border: 1px solid rgba(0,0,0,0.25);
       margin-bottom: 0.5rem;
@@ -113,9 +148,28 @@ function setupStyles () {
       padding-left: 0.5rem;
       gap: 0.5rem;
     }
+    .mg-column-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
   `
   
   document.body.append($style)
+}
+
+function createColumnControl () {
+  const $slider = document.createElement('input')
+  $slider.type = 'range'
+  $slider.min = '1'
+  $slider.max = '20'
+
+  const $label = document.createElement('label')
+  $label.classList.add('mg-column-control')
+  $label.textContent = 'Columns'
+  $label.appendChild($slider)
+
+  return $label
 }
 
 function createFullscreenButton (title) {
@@ -136,13 +190,17 @@ function createFullscreenButton (title) {
   return $button
 }
 
+function handleExitFullscreen () {
+  document.exitFullscreen()
+}
+
 function handleFullscreen () {
-  const tabsWithPaddingWrapper = document.querySelector(tabsWithPaddingSelector)
+  const tabsWithPaddingWrapper = document.querySelector(SELECTOR.tabsWithPadding)
   tabsWithPaddingWrapper.requestFullscreen()
 }
 
 function setupControls () {
-  const tabsWrapper = document.querySelector(tabsSelector)
+  const tabsWrapper = document.querySelector(SELECTOR.tabs)
   
   const actionWrapper = document.createElement('section')
   actionWrapper.classList.add('mg-action-bar')
@@ -150,10 +208,22 @@ function setupControls () {
   const $mgLogo = document.createElement('p')
   $mgLogo.classList.add('mg')
   $mgLogo.textContent = 'Modest Guitar'
-  actionWrapper.appendChild($mgLogo)
-
+  
   const fsButton = createFullscreenButton('Fullscreen')
+  fsButton.classList.add('mg-enter-fullscreen')
+  const exitFsButton = createFullscreenButton('Exit fullscreen')
+  exitFsButton.classList.add('mg-exit-fullscreen')
+  exitFsButton.addEventListener('click', handleExitFullscreen)
+  
+  
+  const columnControl = createColumnControl()
+  const columnInput = columnControl.querySelector('input')
+  columnInput.addEventListener('input', handleColumnSliderInput)
+  
+  actionWrapper.appendChild($mgLogo)
+  actionWrapper.appendChild(columnControl)
   actionWrapper.appendChild(fsButton)
+  actionWrapper.appendChild(exitFsButton)
 
   // add on top of tabs
   tabsWrapper.insertAdjacentElement("beforebegin", actionWrapper)
@@ -165,6 +235,10 @@ function setupControls () {
   }
 }
 
+function handleColumnSliderInput (event) {
+  document.body.dataset.columnCount = event.target.value
+}
+
 function fixChordHighlight () {
   // force every chord highlight to render no matter screen size
   const script = document.createElement('script');
@@ -173,7 +247,68 @@ function fixChordHighlight () {
   script.remove();
 }
 
+async function setupState () {
+
+  let prevColumnCount = null
+  let prevDarkMode = null
+  
+  const observer = new MutationObserver((mutationList) => {
+    for (const mutation of mutationList) {
+      if (mutation.attributeName === 'data-column-count') {
+        const columnCount = mutation.target.dataset.columnCount
+        const slider = document.querySelector('.mg-column-control > input')
+        slider.value = columnCount
+        setColumns(columnCount)
+        if (prevColumnCount !== columnCount) {
+          sendToPopup({
+            message: 'setColumns',
+            columnCount
+          })
+          chrome.storage.local.set({ columnCount })
+          prevColumnCount = columnCount
+        }
+      } else if (mutation.attributeName === 'data-dark-mode') {
+        const darkMode = mutation.target.dataset.darkMode
+        if (prevDarkMode !== darkMode) {
+          sendToPopup({
+            message: 'setDarkMode',
+            darkMode
+          })
+          chrome.storage.local.set({ darkMode })
+          prevDarkMode = darkMode
+        }
+      }
+    }
+  })
+  observer.observe(document.body, { attributes: true })
+
+  const userSettings = await chrome.storage.local.get(['columnCount', 'darkMode'])
+  document.body.dataset.columnCount = userSettings.columnCount || 2
+  document.body.dataset.darkMode = userSettings.darkMode || false
+}
+
 function setupListeners () {
+  // incoming data
+  chrome.runtime.onMessage.addListener((request) => {
+    console.log('incoming', request)
+    if (request.to !== 'cs') return
+    if (request.message === 'setColumns') {
+      document.body.dataset.columnCount = request.columnCount
+    } else if (request.message === 'setDarkMode') {
+      document.body.dataset.darkMode = request.darkMode
+    } else if (request.message === 'getColumns') {
+      sendToPopup({
+        message: 'setColumns',
+        columnCount: document.body.dataset.columnCount
+      })
+    } else if (request.message === 'getDarkMode') {
+      sendToPopup({
+        message: 'setDarkMode',
+        darkMode: document.body.dataset.darkMode
+      })
+    }
+  })
+  // fullscreen
   document.addEventListener('fullscreenchange', () => {
     const isFullscreen = document.fullscreenElement != null
     if (isFullscreen) {
@@ -185,33 +320,17 @@ function setupListeners () {
 }
 
 async function init () {
-  await waitForElm(wrapperSelector)
-  await waitForElm(tabsSelector)
+  await waitForElm(SELECTOR.wrapper)
+  await waitForElm(SELECTOR.tabs)
   
   setupStyles()
+  setupControls()
   fixChordHighlight()
   maximizeViewport()
+
+  await setupState()
   setupListeners()
-  setupControls()
-  getColumns((columnCount) => {
-    setColumns(columnCount)
-  })
+
 }
 
 init()
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.message === 'setColumns') {
-    chrome.storage.local.set({
-      columnCount: request.columnCount
-    })
-    setColumns(request.columnCount)
-  } else if (request.message === 'getColumns') {
-    getColumns((columnCount) => {
-      sendToPopup({
-        message: 'updateColumns',
-        columnCount: columnCount
-      })
-    })
-  }
-})

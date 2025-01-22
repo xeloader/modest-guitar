@@ -3,6 +3,8 @@ const currentValElem = document.querySelector('#current-column-count')
 const checkDarkMode = document.querySelector('#dark-mode')
 const checkTruncText = document.querySelector('#truncate-text')
 
+const locateFullscreenBtn = document.querySelector('#locate-fullscreen-btn')
+
 let darkMode = false
 
 // send to content script
@@ -35,6 +37,13 @@ function setupListeners () {
     sendToCS({
       message: 'setTruncText',
       truncText: event.target.checked
+    })
+  })
+
+  locateFullscreenBtn.addEventListener('click', (event) => {
+    event.preventDefault()
+    sendToCS({
+      message: 'focusFullscreenControl'
     })
   })
 

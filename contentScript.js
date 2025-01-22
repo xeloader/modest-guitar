@@ -129,8 +129,23 @@ function setupStyles () {
   `
 
   $style.textContent += `
-    [class^=mg-]:focus {
-      outline: red 2px solid;
+    .mg-action-bar *:focus-visible {
+      outline: 2px black solid;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 5px white;
+    }
+
+    @keyframes mg-pulse {
+      from {
+        outline: 3px solid blue;
+      }
+      to {
+        outline: 3px solid transparent;
+      }
+    }
+    .mg-pulse {
+      transition: outline 500ms linear;
+      animation: mg-pulse infinite 500ms linear alternate-reverse;
     }
   `
 
@@ -325,6 +340,11 @@ function setupListeners () {
         message: 'setTruncText',
         truncText: document.body.dataset.truncText
       })
+    } else if (request.message === 'focusFullscreenControl') {
+      const elem = document.querySelector('.mg-action-bar')
+      elem.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      elem.classList.add('mg-pulse')
+      setTimeout(() => elem.classList.remove('mg-pulse'), 3000)
     }
   })
   // fullscreen

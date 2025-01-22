@@ -2,6 +2,7 @@
   body {
     font-family: sans-serif;
     font-size: 18px;
+    max-width: 240px;
   }
   .settings {
     display: flex;
@@ -16,8 +17,11 @@
     font-size: 14px;
     font-style: italic;
     margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
   }
 </style>
+
+<meta charset="utf-8" />
 
 <div>
   <div class="settings">
@@ -38,6 +42,11 @@
         <input id="truncate-text" type="checkbox" />
         <span>Truncate Text</span>
       </label>
+
+      
     </div>
+
+    <hr/>
+    <p class="description">Fullscreen is available as a control just above the tab itself. <a id="locate-fullscreen-btn" href="#">show me</a></p>
     <script src="popup.js"></script>
 </div>

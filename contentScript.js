@@ -121,8 +121,8 @@ function setupStyles () {
     /**
      * Ellipsis text overflowing columns
      **/
-    ${SELECTOR.tabs},
-    ${SELECTOR.tabs} span {
+    [data-trunc-text=true] ${SELECTOR.tabs},
+    [data-trunc-text=true] ${SELECTOR.tabs} span {
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -251,6 +251,7 @@ async function setupState () {
 
   let prevColumnCount = null
   let prevDarkMode = null
+  let prevTruncText = null
   
   const observer = new MutationObserver((mutationList) => {
     for (const mutation of mutationList) {
@@ -277,14 +278,25 @@ async function setupState () {
           chrome.storage.local.set({ darkMode })
           prevDarkMode = darkMode
         }
+      } else if (mutation.attributeName === 'data-trunc-text') {
+        const truncText = mutation.target.dataset.truncText
+        if (prevTruncText !== truncText) {
+          sendToPopup({
+            message: 'setTruncText',
+            truncText
+          })
+          chrome.storage.local.set({ truncText })
+          prevTruncText = truncText
+        }
       }
     }
   })
   observer.observe(document.body, { attributes: true })
 
-  const userSettings = await chrome.storage.local.get(['columnCount', 'darkMode'])
-  document.body.dataset.columnCount = userSettings.columnCount || 2
-  document.body.dataset.darkMode = userSettings.darkMode || false
+  const userSettings = await chrome.storage.local.get(['columnCount', 'darkMode', 'truncText'])
+  document.body.dataset.columnCount = userSettings.columnCount ?? 2
+  document.body.dataset.darkMode = userSettings.darkMode ?? false
+  document.body.dataset.truncText = userSettings.truncText ?? true
 }
 
 function setupListeners () {
@@ -296,6 +308,8 @@ function setupListeners () {
       document.body.dataset.columnCount = request.columnCount
     } else if (request.message === 'setDarkMode') {
       document.body.dataset.darkMode = request.darkMode
+    } else if (request.message === 'setTruncText') {
+      document.body.dataset.truncText = request.truncText
     } else if (request.message === 'getColumns') {
       sendToPopup({
         message: 'setColumns',
@@ -305,6 +319,11 @@ function setupListeners () {
       sendToPopup({
         message: 'setDarkMode',
         darkMode: document.body.dataset.darkMode
+      })
+    } else if (request.message === 'getTruncText') {
+      sendToPopup({
+        message: 'setTruncText',
+        truncText: document.body.dataset.truncText
       })
     }
   })

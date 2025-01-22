@@ -1,6 +1,7 @@
 const rangeElem = document.querySelector('#column-count')
 const currentValElem = document.querySelector('#current-column-count')
 const checkDarkMode = document.querySelector('#dark-mode')
+const checkTruncText = document.querySelector('#truncate-text')
 
 let darkMode = false
 
@@ -23,10 +24,17 @@ function setupListeners () {
       columnCount: event.target.value
     })
   })
-  checkDarkMode.addEventListener('click', (event) => {
+  checkDarkMode.addEventListener('change', (event) => {
     sendToCS({
       message: 'setDarkMode',
       darkMode: event.target.checked
+    })
+  })
+
+  checkTruncText.addEventListener('change', (event) => {
+    sendToCS({
+      message: 'setTruncText',
+      truncText: event.target.checked
     })
   })
 
@@ -44,6 +52,9 @@ function setupListeners () {
           checkDarkMode.checked = incomingDarkMode
           darkMode = incomingDarkMode
         }
+      } else if (request.message === 'setTruncText') {
+        const incomTruncText = request.truncText === 'true'
+        checkTruncText.checked = incomTruncText
       }
     })
 }
@@ -53,6 +64,7 @@ function init () {
 
   sendToCS({ message: 'getColumns' })
   sendToCS({ message: 'getDarkMode' })
+  sendToCS({ message: 'getTruncText' })
 }
 
 init()

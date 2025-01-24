@@ -33,13 +33,6 @@ function setupListeners () {
     })
   })
 
-  checkTruncText.addEventListener('change', (event) => {
-    sendToCS({
-      message: 'setTruncText',
-      truncText: event.target.checked
-    })
-  })
-
   locateFullscreenBtn.addEventListener('click', (event) => {
     event.preventDefault()
     sendToCS({
@@ -73,7 +66,6 @@ function init () {
 
   sendToCS({ message: 'getColumns' })
   sendToCS({ message: 'getDarkMode' })
-  sendToCS({ message: 'getTruncText' })
 }
 
 init()

@@ -5,6 +5,12 @@ const SELECTOR = {
   mainContent: 'article.o2tA_.JJ8_m'
 }
 
+const DEFAULT_STATE = {
+  columnCount: 2,
+  darkMode: false,
+  truncText: false
+}
+
 function waitForElm(selector) {
   return new Promise(resolve => {
     if (document.querySelector(selector)) {
@@ -87,7 +93,7 @@ function setupStyles () {
     }
     [data-dark-mode=true].mg-fullscreen ${SELECTOR.tabsWithPadding} {
       filter: invert();
-  }
+    }
   `
 
   $style.textContent += `
@@ -305,10 +311,13 @@ async function setupState () {
   })
   observer.observe(document.body, { attributes: true })
 
-  const userSettings = await chrome.storage.local.get(['columnCount', 'darkMode', 'truncText'])
-  document.body.dataset.columnCount = userSettings.columnCount ?? 2
-  document.body.dataset.darkMode = userSettings.darkMode ?? false
-  document.body.dataset.truncText = userSettings.truncText ?? true
+  // get stored preferences
+  const userSettings = await chrome.storage.local.get(Object.keys(DEFAULT_STATE))
+
+  // set preferences based on availabe info
+  for (let [key, value] of Object.entries(DEFAULT_STATE)) {
+    document.body.dataset[key] = userSettings[key] ?? value
+  }
 }
 
 function setupListeners () {

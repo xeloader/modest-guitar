@@ -79,7 +79,6 @@ function setupStyles () {
   const $style = document.createElement('style')
   $style.id = "modest-guitar-color-scheme"
   $style.textContent = `
-  @media (prefers-color-scheme: dark) {
     [data-dark-mode=true] ${SELECTOR.mainContent} {
       filter: invert();
     }
@@ -88,7 +87,6 @@ function setupStyles () {
     }
     [data-dark-mode=true].mg-fullscreen ${SELECTOR.tabsWithPadding} {
       filter: invert();
-    }
   }
   `
 

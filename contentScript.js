@@ -254,12 +254,11 @@ function handleColumnSliderInput (event) {
   document.body.dataset.columnCount = event.target.value
 }
 
+// force every chord highlight to render no matter screen size
 function fixChordHighlight () {
-  // force every chord highlight to render no matter screen size
-  const script = document.createElement('script');
-  script.textContent = `window.innerHeight = 10_000;`;
-  document.documentElement.appendChild(script);
-  script.remove();
+  const s = document.createElement('script');
+  s.src = chrome.runtime.getURL('fixChordHighlight.js');
+  document.documentElement.append(s);
 }
 
 async function setupState () {

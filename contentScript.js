@@ -117,7 +117,7 @@ function setupStyles () {
       display: none;
     }
     .mg-fullscreen ${SELECTOR.tabs} {
-      background-color: transparent;
+      background-color: transparent !important;
     }
   `
 

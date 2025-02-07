@@ -23,7 +23,7 @@ function waitForElm(selector) {
   })
 }
 
-function setColumns (columnCount) {
+function setColumns(columnCount) {
   const tabWrapper = document.querySelector(tabsSelector)
   if (tabWrapper) {
     tabWrapper.style.columnCount = columnCount
@@ -31,35 +31,35 @@ function setColumns (columnCount) {
 }
 
 // send to the popup script
-function sendToPopup (message) {
+function sendToPopup(message) {
   chrome.runtime.sendMessage(message)
 }
 
-function getColumns (cb) {
+function getColumns(cb) {
   chrome.storage.local.get('columnCount', (items) => {
     cb(items.columnCount || 2)
   })
 }
 
-function getWrapper () {
+function getWrapper() {
   const main = document.querySelector(wrapperSelector)
   if (main) {
     return main.parentNode
   }
 }
 
-function maximizeViewport () {
+function maximizeViewport() {
   const wrapper = getWrapper()
   if (wrapper) {
     wrapper.style.maxWidth = 'unset'
   }
 }
 
-function createButton (title) {
+function createButton(title) {
   const $button = document.createElement('button')
   const buttonClasses = 'rPQkl mcpNL IxFbd gm3Af lTEpj qOnLe'.split(' ')
   $button.classList.add(...buttonClasses)
-  
+
   const $title = document.createElement('span')
   const titleClasses = 'KNVWh _sWeD'.split(' ')
   $title.classList.add(...titleClasses)
@@ -70,21 +70,21 @@ function createButton (title) {
   return $button
 }
 
-function setupStyles () {
+function setupStyles() {
   const $style = document.createElement('style')
   $style.id = "modest-guitar-color-scheme"
-  $style.textContent = `
-  @media (prefers-color-scheme: dark) {
-    ${mainContentSelector} {
-      filter: invert();
+  $style.textContent = `  
+    .mg-fullscreen.dark-mode { 
+      ${tabsWithPaddingSelector} {
+        filter: invert();
+      }
+    }  
+     
+    body.dark-mode{
+      ${mainContentSelector} {
+        filter: invert();
+      }
     }
-    .mg-fullscreen ${mainContentSelector} {
-      filter: none;
-    }
-    .mg-fullscreen ${tabsWithPaddingSelector} {
-      filter: invert();
-    }
-  }
   `
 
   $style.textContent += `
@@ -114,11 +114,31 @@ function setupStyles () {
       gap: 0.5rem;
     }
   `
-  
+
+  $style.textContent += `
+    .material-symbols-outlined {
+      font-size: 18px;
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 20
+    }
+  `
   document.body.append($style)
+
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.body.classList.add('dark-mode')
+  }
+
+  const iconImport = document.createElement('link')
+  iconImport.setAttribute('rel', 'stylesheet')
+  iconImport.setAttribute('href', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=routine')
+
+  document.head.appendChild(iconImport)
 }
 
-function createFullscreenButton (title) {
+function createFullscreenButton(title) {
   const $button = createButton(title)
   const $icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   $icon.setAttribute('width', 16)
@@ -136,7 +156,24 @@ function createFullscreenButton (title) {
   return $button
 }
 
-function handleFullscreen () {
+function createDarkModeTogglebutton(title) {
+  const $button = createButton(title)
+  const $icon = document.createElement('i')
+  $icon.setAttribute('width', 16)
+  $icon.setAttribute('height', 16)
+  $icon.setAttribute('viewBox', '0 0 16 16')
+  $icon.setAttribute('fill', 'none')
+  $icon.innerHTML = `<span class="material-symbols-outlined">routine</span>`
+  $icon.classList.add(...'is4YP iWDbw sTohX YEJsU'.split(' '))
+  $button.prepend($icon)
+  return $button
+}
+
+function handleDarkModeToggle() {
+  document.body.classList.toggle('dark-mode')
+}
+
+function handleFullscreen() {
   const tabsWithPaddingWrapper = document.querySelector(tabsWithPaddingSelector)
   if (document.fullscreenElement) {
     document.exitFullscreen()
@@ -145,9 +182,9 @@ function handleFullscreen () {
   }
 }
 
-function setupControls () {
+function setupControls() {
   const tabsWrapper = document.querySelector(tabsSelector)
-  
+
   const actionWrapper = document.createElement('section')
   actionWrapper.classList.add('mg-action-bar')
 
@@ -159,17 +196,23 @@ function setupControls () {
   const fsButton = createFullscreenButton('Fullscreen')
   actionWrapper.appendChild(fsButton)
 
+  const darkModeToggleButton = createDarkModeTogglebutton('Toggle Dark Mode')
+  actionWrapper.appendChild(darkModeToggleButton)
+
   // add on top of tabs
   tabsWrapper.insertAdjacentElement("beforebegin", actionWrapper)
 
   fsButton.addEventListener('click', handleFullscreen)
 
+  darkModeToggleButton.addEventListener('click', handleDarkModeToggle)
+
   return () => {
     fsButton.removeEventListener('click', handleFullscreen)
+    darkModeToggleButton.removeEventListener('click', handleDarkModeToggle)
   }
 }
 
-function fixChordHighlight () {
+function fixChordHighlight() {
   // force every chord highlight to render no matter screen size
   const script = document.createElement('script');
   script.textContent = `window.innerHeight = 10_000;`;
@@ -177,7 +220,7 @@ function fixChordHighlight () {
   script.remove();
 }
 
-function setupListeners () {
+function setupListeners() {
   document.addEventListener('fullscreenchange', () => {
     const isFullscreen = document.fullscreenElement != null
     if (isFullscreen) {
@@ -188,10 +231,10 @@ function setupListeners () {
   })
 }
 
-async function init () {
+async function init() {
   await waitForElm(wrapperSelector)
   await waitForElm(tabsSelector)
-  
+
   setupStyles()
   fixChordHighlight()
   maximizeViewport()

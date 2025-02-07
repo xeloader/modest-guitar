@@ -138,7 +138,11 @@ function createFullscreenButton (title) {
 
 function handleFullscreen () {
   const tabsWithPaddingWrapper = document.querySelector(tabsWithPaddingSelector)
-  tabsWithPaddingWrapper.requestFullscreen()
+  if (document.fullscreenElement) {
+    document.exitFullscreen()
+  } else {
+    tabsWithPaddingWrapper.requestFullscreen()
+  }
 }
 
 function setupControls () {

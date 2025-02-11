@@ -21,3 +21,4 @@ Special thanks to contributors. PRs and ideas are welcome.
 
 - [@TonyBaldascino](https://github.com/TonyBaldascino) - *Support for personal tabs*
 - [@aberonni](https://github.com/aberonni) - *Support for pro tabs*
+- [@bdelo](https://github.com/bdelo) - *Manual dark mode, firefox support*

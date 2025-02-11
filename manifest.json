@@ -3,7 +3,7 @@
   "short_name": "Modest Guitar",
   "version": "0.0.9",
   "manifest_version": 3,
-  "description": "Multiple columns for viewing Ultimate-Guitar tabs",
+  "description": "Multiple columns and fullscreen for Ultimate-Guitar tabs",
   "homepage_url": "https://github.com/xeloader/modest-guitar",
   "browser_specific_settings": {
     "gecko": {
@@ -18,6 +18,16 @@
       ],
       "js": ["contentScript.js"],
       "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "*://*.ultimate-guitar.com/*"
+      ],
+      "resources": [
+        "fixChordHighlight.js"
+      ]
     }
   ],
   "action": {

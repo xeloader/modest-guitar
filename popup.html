@@ -4,6 +4,9 @@
     font-size: 18px;
     width: 240px;
   }
+  a, a:visited {
+    color: blue;
+  }
   .settings {
     display: flex;
     flex-direction: column;
@@ -45,18 +48,26 @@
       <p class="description">Current <span id="current-column-count"></span></p>
     </div>
 
-      <label>
-        <input id="dark-mode" type="checkbox" />
-        <span class="pair">
-          <span>Dark Mode</span>
-          <span class="description">Reduce eye strain in darker environments</span>
-        </span>
-      </label>
+    <label style="margin-bottom: 0.5rem">
+      <input id="dark-mode" type="checkbox" />
+      <span class="pair">
+        <span>Dark Mode</span>
+        <span class="description">Reduce eye strain in darker environments</span>
+      </span>
+    </label>
 
-      
     </div>
 
-    <hr/>
-    <p class="description">Fullscreen is available as a control just above the tab itself. <a id="locate-fullscreen-btn" href="#">show me</a></p>
+    <label id="locate-fullscreen-btn" style="margin-left: 1.4rem;">
+      <span class="pair">
+        <span>Fullscreen</span>
+        <span class="description">You activate fullscreen by clicking the button above the guitar tab. <a style="color: black;" href="#">show me</a></span>
+      </span>
+    </label>
+    
+    <hr />
+    
+    <p class="description">Modest Guitar will always stay free and open source. Consider <a href="https://ko-fi.com/xeloader" target="_blank">supporting me</a> if you find it useful.</a></p>
+
     <script src="popup.js"></script>
 </div>

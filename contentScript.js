@@ -68,12 +68,10 @@ function maximizeViewport () {
 
 function createButton (title) {
   const $button = document.createElement('button')
-  const buttonClasses = 'rPQkl mcpNL IxFbd gm3Af lTEpj qOnLe'.split(' ')
-  $button.classList.add(...buttonClasses)
-  
+  $button.classList.add('mg-button')
+
   const $title = document.createElement('span')
-  const titleClasses = 'KNVWh _sWeD'.split(' ')
-  $title.classList.add(...titleClasses)
+  $title.classList.add('mg-button-title')
   $title.textContent = title
 
   $button.appendChild($title)
@@ -121,9 +119,11 @@ function setupStyles () {
     }
   `
 
+  // disabled until chrome support
   $style.textContent += `
     /**
      * Ellipsis text overflowing columns
+     * NOTE: Firefox only, doesnt work in Chrome.
      **/
     [data-trunc-text=true] ${SELECTOR.tabs},
     [data-trunc-text=true] ${SELECTOR.tabs} span {
@@ -154,6 +154,22 @@ function setupStyles () {
   `
 
   $style.textContent += `
+    .mg-button {
+      border: none;
+      padding: 0.5rem;
+      background-color: transparent;
+      cursor: pointer;
+      border: rgba(255,255,255,0.2);
+      display: flex;
+      gap: 0.5rem;
+      font-family: inherit;
+    }
+    .mg-button .mg-icon {
+
+    }
+  `
+
+  $style.textContent += `
     p.mg {
       margin: 0;
     }
@@ -173,7 +189,7 @@ function setupStyles () {
       gap: 0.5rem;
     }
   `
-  
+
   document.body.append($style)
 }
 
@@ -204,7 +220,7 @@ function createFullscreenButton (title) {
     <path fill-rule="evenodd" clip-rule="evenodd" d="M8.82331 7.59101C8.53042 7.29812 8.53042 6.82324 8.82331 6.53035L12.2501 3.10357L9.47497 3.10357C9.06075 3.10357 8.72494 2.76777 8.72494 2.35355C8.72494 1.93933 9.06072 1.60355 9.47494 1.60355L14.0607 1.60358C14.475 1.60357 14.8107 1.93937 14.8107 2.35358L14.8108 6.93936C14.8108 7.35358 14.475 7.68936 14.0608 7.68936C13.6465 7.68936 13.3108 7.35358 13.3108 6.93936L13.3108 4.16423L9.88397 7.59101C9.59108 7.8839 9.1162 7.8839 8.82331 7.59101Z" fill="black"/>
   </g>
     `
-  $icon.classList.add(...'is4YP iWDbw sTohX YEJsU'.split(' '))
+  $icon.classList.add('mg-icon')
   $button.prepend($icon)
   return $button
 }
@@ -220,34 +236,38 @@ function handleFullscreen () {
 
 function setupControls () {
   const tabsWrapper = document.querySelector(SELECTOR.tabs)
-  
+
   const actionWrapper = document.createElement('section')
   actionWrapper.classList.add('mg-action-bar')
 
   const $mgLogo = document.createElement('p')
   $mgLogo.classList.add('mg')
   $mgLogo.textContent = 'Modest Guitar'
-  
+
+  const enterFsWrapper = document.createElement('div')
+  enterFsWrapper.classList.add('mg-enter-fullscreen')
   const fsButton = createFullscreenButton('Fullscreen')
-  fsButton.classList.add('mg-enter-fullscreen')
+  fsButton.addEventListener('click', handleFullscreen)
+  enterFsWrapper.appendChild(fsButton)
+
+  const exitFsWrapper = document.createElement('div')
+  exitFsWrapper.classList.add('mg-exit-fullscreen')
   const exitFsButton = createFullscreenButton('Exit fullscreen')
-  exitFsButton.classList.add('mg-exit-fullscreen')
   exitFsButton.addEventListener('click', handleExitFullscreen)
-  
-  
+  exitFsWrapper.appendChild(exitFsButton)
+
+
   const columnControl = createColumnControl()
   const columnInput = columnControl.querySelector('input')
   columnInput.addEventListener('input', handleColumnSliderInput)
-  
+
   actionWrapper.appendChild($mgLogo)
   actionWrapper.appendChild(columnControl)
-  actionWrapper.appendChild(fsButton)
-  actionWrapper.appendChild(exitFsButton)
+  actionWrapper.appendChild(enterFsWrapper)
+  actionWrapper.appendChild(exitFsWrapper)
 
   // add on top of tabs
   tabsWrapper.insertAdjacentElement("beforebegin", actionWrapper)
-
-  fsButton.addEventListener('click', handleFullscreen)
 
   return () => {
     fsButton.removeEventListener('click', handleFullscreen)
@@ -270,7 +290,7 @@ async function setupState () {
   let prevColumnCount = null
   let prevDarkMode = null
   let prevTruncText = null
-  
+
   const observer = new MutationObserver((mutationList) => {
     for (const mutation of mutationList) {
       if (mutation.attributeName === 'data-column-count') {
@@ -367,7 +387,7 @@ function setupListeners () {
 async function init () {
   await waitForElm(SELECTOR.wrapper)
   await waitForElm(SELECTOR.tabs)
-  
+
   setupStyles()
   setupControls()
   fixChordHighlight()

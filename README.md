@@ -2,7 +2,7 @@
 
 
 <div align="center">
-Enhance tabs from <a href="https://ultimate-guitar.com">Ultimate-Guitar</a> with multiple columns and fullscreen support.
+Enhance tabs from <a href="https://ultimate-guitar.com">Ultimate-Guitar</a> with multiple columns, fullscreen support and dark mode.
 <br />
 <br />
 <img src="https://img.shields.io/chrome-web-store/stars/kbdobpkcobapldadlpcjbjijmjnjfddk" alt="Chrome Rating" />
@@ -13,7 +13,7 @@ Enhance tabs from <a href="https://ultimate-guitar.com">Ultimate-Guitar</a> with
 ## Install
 
 * [Google Chrome](https://chrome.google.com/webstore/detail/modest-guitar/kbdobpkcobapldadlpcjbjijmjnjfddk)
-* Firefox (Coming soon)
+* [Firefox](https://addons.mozilla.org/en-US/firefox/addon/modest-guitar-official)
 
 ## Contributors
 

@@ -1,30 +1,43 @@
 {
-    "name": "Modest Guitar | Columns for Ultimate-Guitar",
-    "short_name": "Modest Guitar",
-    "version": "0.0.8",
-    "manifest_version": 3,
-    "description": "Multiple columns for viewing Ultimate-Guitar tabs",
-    "homepage_url": "https://github.com/xeloader/modest-guitar",
-    "content_scripts": [
-      {
-        "matches": [
-          "*://*.ultimate-guitar.com/tab/*",
-          "*://*.ultimate-guitar.com/user/tab/*"
-        ],
-        "js": ["contentScript.js"],
-        "all_frames": true
-      }
-    ],
-    "action": {
-      "default_title": "Modest Guitar",
-      "default_popup": "popup.html",
-      "default_icon": {
-        "16": "icons/16.png",
-        "48": "icons/48.png",
-        "128": "icons/128.png"
-      }
-    }, 
-    "permissions": [
-      "storage"
-    ]
-  }
+  "name": "Modest Guitar | Columns for Ultimate-Guitar",
+  "short_name": "Modest Guitar",
+  "version": "0.1.1",
+  "manifest_version": 3,
+  "description": "Multiple columns and fullscreen for Ultimate-Guitar tabs",
+  "homepage_url": "https://github.com/xeloader/modest-guitar",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "modest@guitar.com"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.ultimate-guitar.com/tab/*",
+        "*://*.ultimate-guitar.com/user/tab/*"
+      ],
+      "js": ["contentScript.js"],
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "*://*.ultimate-guitar.com/*"
+      ],
+      "resources": [
+        "fixChordHighlight.js"
+      ]
+    }
+  ],
+  "action": {
+    "default_title": "Modest Guitar",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/16.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    }
+  },
+  "permissions": ["storage"]
+}

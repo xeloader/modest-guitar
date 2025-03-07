@@ -1,6 +1,73 @@
+<style>
+  body {
+    font-family: sans-serif;
+    font-size: 18px;
+    width: 240px;
+  }
+  a, a:visited {
+    color: blue;
+  }
+  .settings {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  #columns {
+    display: flex;
+    flex-direction: column;
+  }
+  .description {
+    font-size: 14px;
+    font-style: italic;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  label {
+    display: flex;
+    align-items: start;
+    gap: 4px;
+  }
+  label .pair {
+    display: flex;
+    flex-direction: column;
+  }
+  label .pair .description {
+    font-size: 14px;
+  }
+</style>
+
+<meta charset="utf-8" />
+
 <div>
-    <p>Number of Columns</p>
-    <input id="column-count" type="range" min="1" max="20" />
-    <p>Current <span id="current-column-count"></span></p>
+  <div class="settings">
+    <div id="columns">
+      <label style="align-items: center; display: flex; flex-direction: center; gap: 0.5rem;">
+        <span>Columns</span>
+        <input id="column-count" type="range" min="1" max="20" />
+      </label>
+      <p class="description">Current <span id="current-column-count"></span></p>
+    </div>
+
+    <label style="margin-bottom: 0.5rem">
+      <input id="dark-mode" type="checkbox" />
+      <span class="pair">
+        <span>Dark Mode</span>
+        <span class="description">Reduce eye strain in darker environments</span>
+      </span>
+    </label>
+
+    </div>
+
+    <label id="locate-fullscreen-btn" style="margin-left: 1.4rem;">
+      <span class="pair">
+        <span>Fullscreen</span>
+        <span class="description">You activate fullscreen by clicking the button above the guitar tab. <a style="color: black;" href="#">show me</a></span>
+      </span>
+    </label>
+    
+    <hr />
+    
+    <p class="description">Modest Guitar will always stay free and open source. Consider <a href="https://ko-fi.com/xeloader" target="_blank">supporting me</a> if you find it useful.</a></p>
+
     <script src="popup.js"></script>
 </div>

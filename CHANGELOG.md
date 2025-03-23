@@ -1,3 +1,8 @@
+## 0.1.2 - 23 March 2025
+
+🐛 Fixes
+- Fix dark mode and fullscreen after frontend updates
+
 ## 0.1.0 - January 2025
 
 ✨ Features

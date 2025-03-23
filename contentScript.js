@@ -1,8 +1,6 @@
 const SELECTOR = {
   wrapper: 'main',
-  tabs: 'code > pre',
-  tabsWithPadding: 'section.P8ReX',
-  mainContent: 'article.o2tA_.JJ8_m'
+  tabs: 'code > pre'
 }
 
 const DEFAULT_STATE = {
@@ -29,6 +27,44 @@ function waitForElm(selector) {
       subtree: true
     })
   })
+}
+
+function findParentWithCondition(elem, cb) {
+  if (!elem || elem === document.documentElement) {
+    return null;
+  }
+
+  if (cb(elem)) {
+    return elem;
+  }
+
+  return findParentWithCondition(elem.parentNode, cb);
+}
+
+function getPaddedTab () {
+  const tab = document.querySelector(SELECTOR.tabs)
+  const paddedTab = findParentWithCondition(tab, (elem) => {
+    const styles = window.getComputedStyle(elem)
+    return styles.getPropertyValue('padding') !== '0px'
+  })
+  const fallback = tab
+  return paddedTab || fallback
+}
+
+function getMainContent () {
+  const tab = document.querySelector(SELECTOR.tabs)
+  const mainContent = findParentWithCondition(tab, (elem) => {
+    return elem.dataset.theme != null
+  })
+  const fallback = document.querySelector('main')
+  return mainContent || fallback
+}
+
+function getCSSSelector (elem) {
+  const classes = Array.from(elem.classList)
+  const classSelector = classes.map(str => `.${str}`).join('')
+  const tagSelector = elem.tagName.toLowerCase()
+  return `${tagSelector}${classSelector}`
 }
 
 function setColumns (columnCount) {
@@ -82,20 +118,34 @@ function createButton (title) {
 function setupStyles () {
   const $style = document.createElement('style')
   $style.id = "modest-guitar-color-scheme"
+
+  const tabsWithPaddingSelector = getCSSSelector(getPaddedTab())
+  const mainContentSelector = getCSSSelector(getMainContent())
+
   $style.textContent = `
-    [data-dark-mode=true] ${SELECTOR.mainContent} {
+    [data-dark-mode=true] ${mainContentSelector}:not([data-theme="dark"]) {
       filter: invert();
     }
-    [data-dark-mode=true].mg-fullscreen ${SELECTOR.mainContent} {
+    [data-dark-mode=true].mg-fullscreen ${mainContentSelector}:not([data-theme="dark"]) {
       filter: none;
     }
-    [data-dark-mode=true].mg-fullscreen ${SELECTOR.tabsWithPadding} {
+    [data-dark-mode=true].mg-fullscreen ${tabsWithPaddingSelector} {
       filter: invert();
     }
   `
 
+  // fixes for ugs official themes
   $style.textContent += `
-    .mg-fullscreen ${SELECTOR.tabsWithPadding} {
+  [data-theme="dark"] .mg-button {
+    color: white;
+  }
+  [data-theme="dark"] .mg-action-bar {
+    border-color: rgba(255,255,255,0.2);
+  }
+  `
+
+  $style.textContent += `
+    .mg-fullscreen ${tabsWithPaddingSelector} {
       overflow-y: scroll;
       overflow-x: hidden;
       background-color: white;
@@ -216,8 +266,8 @@ function createFullscreenButton (title) {
   $icon.setAttribute('fill', 'none')
   $icon.innerHTML = `
   <g>
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.59109 8.82321C7.88398 9.11611 7.88398 9.59098 7.59109 9.88388L4.16431 13.3107L6.93943 13.3106C7.35365 13.3106 7.68945 13.6465 7.68945 14.0607C7.68946 14.4749 7.35368 14.8107 6.93946 14.8107L2.35366 14.8106C1.93945 14.8106 1.60366 14.4749 1.60366 14.0606L1.60364 9.47486C1.60365 9.06065 1.93943 8.72486 2.35364 8.72486C2.76786 8.72486 3.10365 9.06065 3.10364 9.47486L3.10365 12.25L6.53043 8.82321C6.82332 8.53032 7.2982 8.53032 7.59109 8.82321Z" fill="black"/>
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M8.82331 7.59101C8.53042 7.29812 8.53042 6.82324 8.82331 6.53035L12.2501 3.10357L9.47497 3.10357C9.06075 3.10357 8.72494 2.76777 8.72494 2.35355C8.72494 1.93933 9.06072 1.60355 9.47494 1.60355L14.0607 1.60358C14.475 1.60357 14.8107 1.93937 14.8107 2.35358L14.8108 6.93936C14.8108 7.35358 14.475 7.68936 14.0608 7.68936C13.6465 7.68936 13.3108 7.35358 13.3108 6.93936L13.3108 4.16423L9.88397 7.59101C9.59108 7.8839 9.1162 7.8839 8.82331 7.59101Z" fill="black"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.59109 8.82321C7.88398 9.11611 7.88398 9.59098 7.59109 9.88388L4.16431 13.3107L6.93943 13.3106C7.35365 13.3106 7.68945 13.6465 7.68945 14.0607C7.68946 14.4749 7.35368 14.8107 6.93946 14.8107L2.35366 14.8106C1.93945 14.8106 1.60366 14.4749 1.60366 14.0606L1.60364 9.47486C1.60365 9.06065 1.93943 8.72486 2.35364 8.72486C2.76786 8.72486 3.10365 9.06065 3.10364 9.47486L3.10365 12.25L6.53043 8.82321C6.82332 8.53032 7.2982 8.53032 7.59109 8.82321Z" fill="currentColor"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M8.82331 7.59101C8.53042 7.29812 8.53042 6.82324 8.82331 6.53035L12.2501 3.10357L9.47497 3.10357C9.06075 3.10357 8.72494 2.76777 8.72494 2.35355C8.72494 1.93933 9.06072 1.60355 9.47494 1.60355L14.0607 1.60358C14.475 1.60357 14.8107 1.93937 14.8107 2.35358L14.8108 6.93936C14.8108 7.35358 14.475 7.68936 14.0608 7.68936C13.6465 7.68936 13.3108 7.35358 13.3108 6.93936L13.3108 4.16423L9.88397 7.59101C9.59108 7.8839 9.1162 7.8839 8.82331 7.59101Z" fill="currentColor"/>
   </g>
     `
   $icon.classList.add('mg-icon')
@@ -230,8 +280,7 @@ function handleExitFullscreen () {
 }
 
 function handleFullscreen () {
-  const tabsWithPaddingWrapper = document.querySelector(SELECTOR.tabsWithPadding)
-  tabsWithPaddingWrapper.requestFullscreen()
+  getPaddedTab().requestFullscreen()
 }
 
 function setupControls () {

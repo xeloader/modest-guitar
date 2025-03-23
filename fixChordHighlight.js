@@ -1,0 +1,1 @@
+window.innerHeight = 10_000;

@@ -43,9 +43,17 @@ function findParentWithCondition(elem, cb) {
 
 function getPaddedTab () {
   const tab = document.querySelector(SELECTOR.tabs)
+  
+  let elemFound = 0
   const paddedTab = findParentWithCondition(tab, (elem) => {
     const styles = window.getComputedStyle(elem)
-    return styles.getPropertyValue('padding') !== '0px'
+    if (styles.getPropertyValue('padding-inline') !== '0px') {
+      elemFound += 1
+      if (elemFound === 2) {
+        return true
+      }
+      return false
+    }
   })
   const fallback = tab
   return paddedTab || fallback
